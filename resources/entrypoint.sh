@@ -12,9 +12,9 @@ chmod -R 775 /var/www/stalker/storage
 chmod -R 775 /var/www/stalker/public
 echo "User permissions on docroot & storage configured."
 
-appKey=$( cat /var/www/stalker/.env  | grep 'base64' )
+appKey=$(cat /var/www/stalker/.env | grep 'base64')
 
-if [[ ! appKey ]]; then
+if [[ ! $appKey ]]; then
     php artisan key:generate
     echo "New application key generated."
 fi

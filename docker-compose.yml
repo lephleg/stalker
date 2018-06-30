@@ -1,0 +1,42 @@
+version: '3.1'
+
+services:
+  stalker-mysql:  
+    image: mysql:5.7
+    container_name: stalker-mysql
+    hostname: stalker-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      MYSQL_DATABASE: stalkerdb
+      MYSQL_USER: stalker
+      MYSQL_PASSWORD_FILE: /run/secrets/db_password
+    restart: unless-stopped
+    volumes:
+      - stalker-mysql-data:/var/lib/mysql
+    secrets:
+      - db_root_password
+      - db_password
+
+  stalker-app:
+    depends_on:
+      - stalker-mysql
+    build: .
+    container_name: stalker-app
+    hostname: stalker-app
+    restart: unless-stopped
+    volumes:
+      - ./src:/var/www/stalker
+    ports:
+      - "80:80"
+
+secrets:
+  db_root_password:
+    file: db_root_password.txt
+  db_password:
+    file: db_password.txt
+
+volumes:
+  stalker-mysql-data:
+
+networks:
+  default:

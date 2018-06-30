@@ -13,6 +13,8 @@ services:
     restart: unless-stopped
     volumes:
       - stalker-mysql-data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:3306:3306"
     secrets:
       - db_root_password
       - db_password

@@ -53,6 +53,8 @@ Stalker comes with a ready-to-deploy Docker stack, also included in this reposit
     SESSION_DRIVER=file
     SESSION_LIFETIME=120
     QUEUE_DRIVER=sync
+
+    MAILCHIMP_API_KEY=
 	```
 
 4. Spin up the containers:

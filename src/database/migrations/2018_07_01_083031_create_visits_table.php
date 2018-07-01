@@ -18,7 +18,7 @@ class CreateVisitsTable extends Migration
             $table->unsignedInteger('visitor_id');
             $table->string('ip_address');
             $table->string('url');
-            $table->dateTime('timestamp');
+            $table->dateTime('visited_at');
         });
     }
 

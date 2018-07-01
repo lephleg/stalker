@@ -24,7 +24,7 @@ class Visit extends Model
         'visitor_id',
         'ip_address',
         'url',
-        'timestamp'
+        'visited_at'
     ];
 
     /**
@@ -37,7 +37,7 @@ class Visit extends Model
      * Indicates which attributes should be casted as Carbon object
      * @var bool
      */
-    public $dates = ['timestamp'];
+    public $dates = ['visited_at'];
 
 
     /**

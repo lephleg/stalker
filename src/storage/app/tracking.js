@@ -31,7 +31,7 @@
         _visitor.vid = vid ? vid : generateUuidV4();
         _visitor.visitsCount = visitsCount ? visitsCount : 1;
         _visitor.agent = navigator.userAgent;
-        _visitor.timestamp = new Date();
+        _visitor.visitedAt = new Date();
         _visitor.url = window.location.href;
 
         function generateUuidV4() {
@@ -59,6 +59,7 @@
         var xhttp = new XMLHttpRequest();
         xhttp.open("POST", stalkerUrl);
         xhttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        xhttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         xhttp.send(JSON.stringify(visitor));
     }
 

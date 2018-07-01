@@ -1,10 +1,65 @@
 # Stalker
 
-## Project Description
+### Project Description
 
 **Stalker** is a PHP application based on Laravel 5.6, that will hunt you down and track every visit you may make on a website using its tracking code.
 
-_TODO blah blah_
+Stalker service uses a javascript snippet like the following, to inject its tracking code on every website on its network:
+
+```
+<script>
+  (function() {
+    stalkerUrl = document.location.protocol + "//stalker.io/sites/<site_id>";
+    var stalker = document.createElement("script");
+    stalker.type = "text/javascript";
+    stalker.async = true;
+    stalker.src = stalkerUrl + "/tracking-code?key=<site_key>";
+    $(document.body).append(stalker)
+  }())
+</script>
+```
+
+The tracking code uses cookies to identify unique visitors. The flow is more or less the following:
+
+1. A user visits a tracked website. Tracking code checks for the existence of a `vid` cookie on user's browser.
+2. If the cookie doesn't exists, a new one is created and as its value a UUID is generated (an [RFC4122](https://www.ietf.org/rfc/rfc4122.txt) version 4 compliant solution has been used). Another cookie `visits_count` will also be created with the initial value of `1`.
+3. If the cookie exists, the `visits_count` counter gets increased by `1`.
+4. After the cookies have been updated, the following information are being tracked regarding the current visit:
+
+    * User's agent (browser)
+    * Page URL
+    * Client's datetime
+    * Users' IP address
+
+5. To get the public IP address of the user a third-party service is being used ([ipify.org](https://www.ipify.org/)).
+6. As soon as the IP address has been received the tracking code sends the tracking data back to Stalker's server to be verified and stored.
+
+The tracking code can been found here: [tracking.js](https://github.com/lephleg/stalker/blob/master/src/storage/app/tracking.js).
+
+### Endpoints
+
+<table>
+	<tr>
+        <th>Method</th>
+		<th width="400px">URI</th>
+		<th>Description</th>
+ 	</tr>
+ 	<tr>
+        <td><b>GET</b></td>
+   		<td><pre>/sites</pre></td>
+        <td>Returns all the registered websites.</td>
+ 	</tr>
+	<tr>
+  		<td><b>GET</b></td>
+   		<td><pre>/sites/{id}/tracking-code</pre></td>
+        <td>Serves the JavaScript tracking code after checking on website details.</td>
+ 	</tr>
+	<tr>
+  		<td><b>POST</b></td>
+   		<td><pre>/sites/{id}</pre></td>
+        <td>Used by tracking code to post tracking data in a predefined format.</td>
+ 	</tr>
+</table>
 
 ## Application Setup Instructions
 
@@ -74,3 +129,8 @@ Stalker comes with a ready-to-deploy Docker stack, also included in this reposit
     ```
 
 6. That's it! Navigate to [http://localhost](http://localhost) to access the application.
+
+
+## TODO List
+
+* Add UI to register new websites, fetch initial JavaScript snippet for your site and present analytics about unique visitors, page views, browser usage, etc, based on Stalker's data collected.

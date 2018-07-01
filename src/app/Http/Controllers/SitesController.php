@@ -29,6 +29,39 @@ class SitesController extends Controller
     }
 
     /**
+     * Registers a new site
+     * @param Request $request
+     * @return Site
+     */
+    public function store(Request $request)
+    {
+
+        // validate request payload
+        $request->validate([
+            'name' => 'required|string',
+            'url' => 'required|url'
+        ]);
+
+        try {
+            // create a new site record
+            $site = Site::create([
+                'name' => $request->name,
+                'url' => $request->url
+            ]);
+        } catch (\Exception $e) {
+            \Log::error($e->getLine() . '-' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => __('messages.site_stored_error')
+            ], 500);
+        }
+
+        return $site;
+
+    }
+
+
+    /**
      * Serves the javascript tracking code
      * @param Request $request
      * @param $id

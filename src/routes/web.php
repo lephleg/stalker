@@ -16,6 +16,7 @@ Route::get('/', function() {
 });
 
 Route::get('/sites', 'SitesController@index');
+Route::post('/sites', 'SitesController@store');
 
 Route::post('/sites/{id}', 'SitesController@storeTrackingData')
     ->middleware('cors');

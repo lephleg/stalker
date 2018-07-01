@@ -41,23 +41,33 @@ The tracking code can been found here: [tracking.js](https://github.com/lephleg/
 <table>
 	<tr>
         <th>Method</th>
-		<th width="400px">URI</th>
+		<th width="300px">URI</th>
+        <th width="200px">Parameters</th>
 		<th>Description</th>
  	</tr>
  	<tr>
         <td><b>GET</b></td>
    		<td><pre>/sites</pre></td>
+        <td></td>
         <td>Returns all the registered websites.</td>
+ 	</tr>
+    <tr>
+  		<td><b>POST</b></td>
+   		<td><pre>/sites</pre></td>
+        <td>string <b>name</b>,<br> string <b>url</b></td>
+        <td>Create a new website</td>
  	</tr>
 	<tr>
   		<td><b>GET</b></td>
    		<td><pre>/sites/{id}/tracking-code</pre></td>
+        <td>string <b>key</b></td>
         <td>Serves the JavaScript tracking code after checking on website details.</td>
  	</tr>
 	<tr>
   		<td><b>POST</b></td>
    		<td><pre>/sites/{id}</pre></td>
-        <td>Used by tracking code to post tracking data in a predefined format.</td>
+        <td>string <b>vid</b>, </br>integer <b>visitsCount</b>, </br>string <b>agent</b>, </br>string <b>url</b>, </br>datetime <b>visitedAt</b>, </br>string <b>ipAddress</b></td>
+        <td>Used by tracking code to post tracking data.</td>
  	</tr>
 </table>
 

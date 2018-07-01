@@ -66,15 +66,14 @@ class Site extends Model
 
 
     /**
-     * Generates a site's key by hashing its id providing the application key as the key
+     * Generates a site's key by hashing its url providing the application key as the key
      * and truncating it to 16 chars length
      */
     protected function generateKey()
     {
         if (!$this->key) {
-            $hmac = hash_hmac('md5', $this->id, Config::get('app.key'));
+            $hmac = hash_hmac('md5', $this->url, Config::get('app.key'));
             $this->key = substr($hmac, 0, 16);
-            $this->save();
         }
     }
 

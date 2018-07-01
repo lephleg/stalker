@@ -18,7 +18,9 @@ Route::get('/', function() {
 Route::get('/sites', 'SitesController@index');
 
 Route::post('/sites/{id}', 'SitesController@storeTrackingData')
-    ->middleware('cors')
-    ->name('tracking-data');
+    ->middleware('cors');
 
 Route::get('/sites/{id}/tracking-code', 'SitesController@getTrackingCode');
+
+Route::get('/mailchimp/lists', 'MailchimpController@getLists');
+Route::post('/mailchimp/subscribe', 'MailchimpController@subscribe');

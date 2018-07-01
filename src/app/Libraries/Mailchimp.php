@@ -63,11 +63,11 @@ class Mailchimp
             $options
         );
 
-        return $res->getBody();
+        return json_decode($res->getBody()->getContents());
     }
 
     /**
-     * Perform a Guzzle HTTP request to MailChimp API
+     * Perform a member subscription Guzzle HTTP request to MailChimp API
      * @param string $listId
      * @param array $member
      * @param array $options
@@ -77,15 +77,15 @@ class Mailchimp
     public function subscribe(string $listId, array $member, array $options = [])
     {
 
-        $options = array_merge($member, $options);
+        $options = array_merge(['json' => $member], $options);
 
         $res =  $this->client->request(
             'POST',
-            "lists/{$listId}/members	",
+            "lists/${listId}/members",
             $options
         );
 
-        return $res->getBody();
+        return json_decode($res->getBody()->getContents());
     }
 
 

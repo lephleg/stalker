@@ -11,6 +11,14 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', function() {
+    return redirect('/sites');
 });
+
+Route::get('/sites', 'SitesController@index');
+
+Route::post('/sites/{id}', 'SitesController@storeTrackingData')
+    ->middleware('cors')
+    ->name('tracking-data');
+
+Route::get('/sites/{id}/tracking-code', 'SitesController@getTrackingCode');

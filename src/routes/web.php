@@ -21,6 +21,7 @@ Route::post('/sites', 'SitesController@store');
 Route::post('/sites/{id}', 'SitesController@storeTrackingData')
     ->middleware('cors');
 
+Route::get('/sites/{id}/snippet', 'SitesController@getSnippet');
 Route::get('/sites/{id}/tracking-code', 'SitesController@getTrackingCode');
 
 Route::get('/mailchimp/lists', 'MailchimpController@getLists');

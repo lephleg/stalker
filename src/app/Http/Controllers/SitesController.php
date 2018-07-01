@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Site;
 use App\Visit;
 use App\Visitor;
+use Config;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use \Illuminate\Contracts\Filesystem\FileNotFoundException;
 
 /**
  * Class SitesController
@@ -60,39 +62,59 @@ class SitesController extends Controller
 
     }
 
+    /**
+     * Returns the modified javascript snippet that should be placed on website's HTML
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse|mixed|string
+     */
+    public function getSnippet($id)
+    {
+
+        // verify site existence
+        $site = Site::findOrFail($id);
+
+        try {
+            // fetch snippet template from storage
+            $content = Storage::get('snippet.js');
+        } catch (FileNotFoundException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => __('messages.internal_error')
+            ], 500);
+        }
+
+        // replace placeholders with stalker & sites details
+        $url = parse_url(Config::get('app.url'));
+        $content = str_replace("<stalker_host>", $url['host'], $content);
+        $content = str_replace("<site_id>", $site->id, $content);
+
+        // return modified snippet to user
+        return $content;
+
+    }
 
     /**
      * Serves the javascript tracking code
-     * @param Request $request
      * @param $id
      * @return string
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function getTrackingCode(Request $request, $id)
+    public function getTrackingCode($id)
     {
 
-        // validate request
-        if (!$request->has('key')) {
+        // verify site existence
+        Site::findOrFail($id);
+
+        try {
+            // fetch tracking code from storage and serve it
+            $file =  Storage::get('tracking.js');
+        } catch (FileNotFoundException $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => __('messages.site_key_missing')
-            ], 400);
+                'message' => __('messages.internal_error')
+            ], 500);
         }
 
-        // verify site existence and site key
-        $site = Site::where('id', $id)
-            ->where('key', $request->key)
-            ->first();
-
-        if (!$site) {
-            return response()->json([
-                'status' => 'error',
-                'message' => __('messages.site_not_found')
-            ], 404);
-        }
-
-        // fetch tracking code from storage and serve it
-        return Storage::get('tracking.js');
+        return $file;
 
     }
 

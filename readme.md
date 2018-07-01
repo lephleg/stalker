@@ -8,14 +8,14 @@ Stalker service uses a javascript snippet like the following, to inject its trac
 
 ```
 <script>
-  (function() {
-    stalkerUrl = document.location.protocol + "//stalker.io/sites/<site_id>";
+(function() {
+    stalkerUrl = document.location.protocol + "//<stalker_host>/sites/<site_id>";
     var stalker = document.createElement("script");
     stalker.type = "text/javascript";
     stalker.async = true;
-    stalker.src = stalkerUrl + "/tracking-code?key=<site_key>";
+    stalker.src = stalkerUrl + "/tracking-code";
     $(document.body).append(stalker)
-  }())
+}())
 </script>
 ```
 
@@ -55,12 +55,18 @@ The tracking code can been found here: [tracking.js](https://github.com/lephleg/
   		<td><b>POST</b></td>
    		<td><pre>/sites</pre></td>
         <td>string <b>name</b>,<br> string <b>url</b></td>
-        <td>Create a new website</td>
+        <td>Creates a new website.</td>
+ 	</tr>
+     	<tr>
+  		<td><b>GET</b></td>
+   		<td><pre>/sites/{id}/snippet</pre></td>
+        <td></td>
+        <td>Returns the JavaScript snippet that should be placed on website's pages.</td>
  	</tr>
 	<tr>
   		<td><b>GET</b></td>
    		<td><pre>/sites/{id}/tracking-code</pre></td>
-        <td>string <b>key</b></td>
+        <td></td>
         <td>Serves the JavaScript tracking code after checking on website details.</td>
  	</tr>
 	<tr>
@@ -143,4 +149,4 @@ Stalker comes with a ready-to-deploy Docker stack, also included in this reposit
 
 ## TODO List
 
-* Add UI to register new websites, fetch initial JavaScript snippet for your site and present analytics about unique visitors, page views, browser usage, etc, based on Stalker's data collected.
+* Add UI to present analytics about unique visitors, page views, browser usage, etc, based on Stalker's data collected.

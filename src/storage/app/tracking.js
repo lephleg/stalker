@@ -41,20 +41,6 @@
         }
     }
 
-    function fetchPublicId() {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var data =  JSON.parse(this.responseText);
-                visitor.ipAddress = data.ip;
-                postTrackingData();
-            }
-        };
-
-        xhttp.open("GET", "https://api.ipify.org?format=json");
-        xhttp.send();
-    };
-
     function postTrackingData() {
         var xhttp = new XMLHttpRequest();
         xhttp.open("POST", stalkerUrl);
@@ -76,6 +62,6 @@
         Cookie.setCookie('visits_count', visitsCount);
     }
 
-    fetchPublicId();
+    postTrackingData();
 
-}())
+}());

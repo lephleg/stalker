@@ -136,7 +136,6 @@ class SitesController extends Controller
             'agent' => 'required|string',
             'url' => 'required|url',
             'visitedAt' => 'required|date',
-            'ipAddress' => 'required|ip'
         ]);
 
         // verify this is a new or a returning user
@@ -166,7 +165,7 @@ class SitesController extends Controller
         try {
             $visit = Visit::create([
                 'visitor_id' => $visitor->id,
-                'ip_address' => $request->ipAddress,
+                'ip_address' => $request->getClientIp(),
                 'url' => $request->url,
                 'visited_at' => new Carbon($request->visitedAt)
             ]);

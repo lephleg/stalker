@@ -5,6 +5,6 @@
     stalker.type = "text/javascript";
     stalker.async = true;
     stalker.src = stalkerUrl + "/tracking-code";
-    $(document.body).append(stalker)
-}())
+    document.body.appendChild(stalker);
+}());
 </script>

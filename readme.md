@@ -14,8 +14,8 @@ Stalker service uses a javascript snippet like the following, to inject its trac
     stalker.type = "text/javascript";
     stalker.async = true;
     stalker.src = stalkerUrl + "/tracking-code";
-    $(document.body).append(stalker)
-}())
+    document.body.appendChild(stalker);
+}());
 </script>
 ```
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Facades\App\Libraries\Mailchimp;
 use App\Libraries\Mailchimp as MailchimpLib;
+use Illuminate\Validation\ValidationException;
 use Validator;
 use \Exception;
 use GuzzleHttp\Exception\GuzzleException;
@@ -41,15 +42,9 @@ class MailchimpController extends Controller
                 $response = $chimp->request('get', 'lists');
             }
         } catch (GuzzleException $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
+            return $this->returnErrorJson($e->getMessage(),500, $e);
         } catch (Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 400);
+            return $this->returnErrorJson($e->getMessage(),400, $e);
         }
 
         return json_encode($response);
@@ -71,10 +66,7 @@ class MailchimpController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $validator->errors()->getMessageBag()
-            ], 400);
+            return $this->returnErrorJson($validator->errors()->getMessageBag(),400);
         }
 
         // form member array
@@ -93,15 +85,9 @@ class MailchimpController extends Controller
                 $response = $chimp->subscribe($request->list_id, $member);
             }
         } catch (GuzzleException $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
+            return $this->returnErrorJson($e->getMessage(),500, $e);
         } catch (Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 400);
+            return $this->returnErrorJson($e->getMessage(),400, $e);
         }
 
         // return only the id as JSON

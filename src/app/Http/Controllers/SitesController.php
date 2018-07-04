@@ -7,9 +7,11 @@ use App\Visit;
 use App\Visitor;
 use Config;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use \Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Class SitesController
@@ -33,7 +35,7 @@ class SitesController extends Controller
     /**
      * Registers a new site
      * @param Request $request
-     * @return Site
+     * @return Site | JsonResponse
      */
     public function store(Request $request)
     {
@@ -51,11 +53,7 @@ class SitesController extends Controller
                 'url' => $request->url
             ]);
         } catch (\Exception $e) {
-            \Log::error($e->getLine() . '-' . $e->getMessage());
-            return response()->json([
-                'status' => 'error',
-                'message' => __('messages.site_stored_error')
-            ], 500);
+            return $this->returnErrorJson(__('messages.site_store_error'),500, $e);
         }
 
         return $site;
@@ -70,17 +68,18 @@ class SitesController extends Controller
     public function getSnippet($id)
     {
 
-        // verify site existence
-        $site = Site::findOrFail($id);
+        try {
+            // verify site existence
+            $site = Site::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return $this->returnErrorJson(__('messages.site_not_found'), 404, $e);
+        }
 
         try {
             // fetch snippet template from storage
             $content = Storage::get('snippet.js');
         } catch (FileNotFoundException $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => __('messages.internal_error')
-            ], 500);
+            return $this->returnErrorJson(__('messages.internal_error'), 500, $e);
         }
 
         // replace placeholders with stalker & sites details
@@ -101,17 +100,18 @@ class SitesController extends Controller
     public function getTrackingCode($id)
     {
 
-        // verify site existence
-        Site::findOrFail($id);
+        try {
+            // verify site existence
+            Site::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return $this->returnErrorJson(__('messages.site_not_found'), 404, $e);
+        }
 
         try {
             // fetch tracking code from storage and serve it
             $file =  Storage::get('tracking.js');
         } catch (FileNotFoundException $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => __('messages.internal_error')
-            ], 500);
+            return $this->returnErrorJson(__('messages.internal_error'), 500, $e);
         }
 
         return $file;
@@ -122,12 +122,16 @@ class SitesController extends Controller
      * Receives tracking data about a site, validates and store them
      * @param Request $request
      * @param $id
-     * @return array
+     * @return array | JsonResponse
      */
     public function storeTrackingData(Request $request, $id)
     {
-        // validate site existence
-        $site = Site::findOrFail($id);
+        try {
+            // verify site existence
+            $site = Site::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return $this->returnErrorJson(__('messages.site_not_found'), 404, $e);
+        }
 
         // validate request payload
         $request->validate([
@@ -152,11 +156,7 @@ class SitesController extends Controller
                     'agent' => $request->agent
                 ]);
             } catch (\Exception $e) {
-                \Log::error($e->getLine() . '-' . $e->getMessage());
-                return response()->json([
-                    'status' => 'error',
-                    'message' => __('messages.visitor_store_error')
-                ], 400);
+                return $this->returnErrorJson( __('messages.visitor_store_error'), 400, $e);
             }
         } else {
             $this->verifySync($request, false, $visitor);
@@ -170,17 +170,10 @@ class SitesController extends Controller
                 'visited_at' => new Carbon($request->visitedAt)
             ]);
         } catch (\Exception $e) {
-            \Log::error($e->getLine() . '-' . $e->getMessage());
-            return response()->json([
-                'status' => 'error',
-                'message' => __('messages.visit_store_error')
-            ], 400);
+            return $this->returnErrorJson(__('messages.visit_store_error'), 400, $e);
         }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => __('messages.store_successful')
-        ], 200);
+        return $this->returnSuccessJson(__('messages.store_successful'), 200);
 
     }
 

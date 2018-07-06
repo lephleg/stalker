@@ -29,10 +29,8 @@ The tracking code uses cookies to identify unique visitors. The flow is more or 
     * User's agent (browser)
     * Page URL
     * Client's datetime
-    * Users' IP address
 
-5. To get the public IP address of the user a third-party service is being used ([ipify.org](https://www.ipify.org/)).
-6. As soon as the IP address has been received the tracking code sends the tracking data back to Stalker's server to be verified and stored.
+6. The tracking code sends the tracking data back to Stalker's server to be verified and stored along with the client's IP address.
 
 The tracking code can been found here: [tracking.js](https://github.com/lephleg/stalker/blob/master/src/storage/app/tracking.js).
 
